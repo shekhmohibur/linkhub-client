@@ -1,9 +1,9 @@
 import { FaArrowRightLong } from "react-icons/fa6";
 
-const Button = ({label, btnStyle, textColor, bgColor}) => {
+const Button = ({label, btnStyle, textColor, bgColor, textSize, isIcon}) => {
     return (
         <div>
-            <button className={`${btnStyle} rounded-xl py-7 btn ${bgColor} ${textColor} `}>{label}<FaArrowRightLong /></button>
+            <button className={`transition-all duration-300 ${btnStyle} rounded-xl btn ${bgColor} ${textColor} ${textSize}`}>{label}<FaArrowRightLong className={isIcon}/></button>
         </div>
     );
 };

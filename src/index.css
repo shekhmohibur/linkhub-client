@@ -1,8 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap");
 @import "tailwindcss";
 @plugin "daisyui";
 
 @theme {
   --font-manrope: "Manrope", sans-serif;
   --font-inter: "Inter", sans-serif;
+}
+.hero-gradient {
+  background: linear-gradient(135deg, #4e44d4 0%, #9895ff 100%);
+}
+.text-gradient {
+  background: linear-gradient(135deg, #4e44d4 0%, #983772 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
