@@ -54,7 +54,7 @@ const Navbar = () => {
           <button className="btn bg-transparent outline-none border-none shadow-none text-gray-700 text-lg">
             Log In
           </button>
-          <button className="btn bg-indigo-700/86 text-white rounded-xl text-lg py-5">
+          <button className="btn bg-indigo-700/86 text-white rounded-xl text-lg py-5 border-none">
             Get Started
           </button>
         </div>
