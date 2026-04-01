@@ -47,7 +47,6 @@ const Footer = () => {
 
           </div>
 
-
           {/* copyright */}
           <p className="text-gray-400 text-sm">
             © {year} inToBio.
