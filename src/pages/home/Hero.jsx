@@ -1,75 +1,108 @@
 import { LuBadgeCheck } from "react-icons/lu";
+import { motion } from "framer-motion";
 import Button from "../../components/shared/Button";
 
 const HeroSection = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
   return (
     <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8">
-
       {/* background gradient */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-indigo-300 via-purple-100 to-transparent" />
 
-      <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-8 md:gap-10 py-16 md:py-32">
-
+      <motion.div
+        className="max-w-6xl mx-auto flex flex-col items-center text-center gap-8 md:gap-10 py-16 md:py-32"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {/* badge */}
-        <span className="
-          flex items-center gap-2
-          bg-purple-200/70
-          backdrop-blur-md
-          px-4 py-2
-          rounded-2xl
-          text-sm md:text-base
-          font-semibold
-          border border-purple-300/40
-        ">
+        <motion.span
+          className="
+            flex items-center gap-2
+            bg-purple-200/70
+            backdrop-blur-md
+            px-4 py-2
+            rounded-2xl
+            text-sm md:text-base
+            font-semibold
+            border border-purple-300/40
+          "
+          variants={itemVariants}
+        >
           <LuBadgeCheck size={18} className="text-purple-700" />
           Trusted by 50,000+ top-tier creators
-        </span>
-
+        </motion.span>
 
         {/* heading */}
-        <h1 className="
-          font-manrope
-          font-extrabold
-          leading-tight
-          text-4xl
-          sm:text-5xl
-          md:text-7xl
-          lg:text-8xl
-        ">
+        <motion.h1
+          className="
+            font-manrope
+            font-extrabold
+            leading-tight
+            text-4xl
+            sm:text-5xl
+            md:text-7xl
+            lg:text-8xl
+          "
+          variants={itemVariants}
+        >
           One link for all your
-
-          <span className="
+          <span
+            className="
             block
             bg-gradient-to-r
             from-indigo-600
             to-purple-500
             bg-clip-text
             text-transparent
-          ">
+          "
+          >
             digital magic.
           </span>
-        </h1>
-
+        </motion.h1>
 
         {/* description */}
-        <p className="
-          max-w-2xl
-          text-sm
-          sm:text-base
-          md:text-lg
-          text-gray-700/80
-          font-manrope
-          font-medium
-        ">
-          Transform your bio link into a high-end editorial gallery.
-          Showcase your work, sell products, and grow your audience
-          with unparalleled precision.
-        </p>
-
+        <motion.p
+          className="
+            max-w-2xl
+            text-sm
+            sm:text-base
+            md:text-lg
+            text-gray-700/80
+            font-manrope
+            font-medium
+          "
+          variants={itemVariants}
+        >
+          Transform your bio link into a high-end editorial gallery. Showcase
+          your work, sell products, and grow your audience with unparalleled
+          precision.
+        </motion.p>
 
         {/* buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
-
+        <motion.div
+          className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto"
+          variants={itemVariants}
+        >
           <Button
             btnStyle="
               w-fit sm:w-auto
@@ -110,11 +143,8 @@ const HeroSection = () => {
             label="View Showcase"
             isIcon="hidden"
           />
-
-        </div>
-
-      </div>
-
+        </motion.div>
+      </motion.div>
     </section>
   );
 };

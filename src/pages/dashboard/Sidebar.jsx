@@ -1,63 +1,175 @@
-import { IoMdLink, IoMdPerson, IoMdSettings } from "react-icons/io";
-import { MdInsertChartOutlined } from "react-icons/md";
-import { Link, NavLink } from "react-router";
+import { NavLink } from "react-router";
+
+import {
+  IoMdLink,
+  IoMdPerson,
+  IoMdSettings
+} from "react-icons/io";
+
+import {
+  MdInsertChartOutlined
+} from "react-icons/md";
+
+import {
+  FiHelpCircle,
+  FiLogOut
+} from "react-icons/fi";
+
+
 const Sidebar = () => {
-  const sideLinks = [
+
+  const links = [
+
     {
-      name: "Links",
+      name: "My Links",
       path: "/dashboard/links",
-      icon: IoMdLink,
+      icon: IoMdLink
     },
+
     {
       name: "Profile",
       path: "/dashboard/profile",
-      icon: IoMdPerson,
+      icon: IoMdPerson
     },
+
     {
       name: "Analytics",
       path: "/dashboard/analytics",
-      icon: MdInsertChartOutlined,
+      icon: MdInsertChartOutlined
     },
+
     {
       name: "Settings",
       path: "/dashboard/settings",
-      icon: IoMdSettings,
-    },
+      icon: IoMdSettings
+    }
+
   ];
+
+
   return (
-    <div>
-      <div className="w-60 bg-purple-200/30 min-h-screen">
-        {/* logo here */}
-        <div className="flex justify-center items-center h-20 border-b-2 border-purple-500/30">
-          <Link to="/">
-            <h1
-              className="
-              font-inter
-              text-xl md:text-2xl
-              font-semibold
-              text-indigo-700
-              tracking-tight
-            "
-            >
-              inToBio
-            </h1>
-          </Link>
-        </div>
-        {/* sidebar links are here */}
-        <div className="flex flex-col">
-          {sideLinks?.map((link, idx) => {
-            const Icon = link.icon;
+
+    <div className="
+      flex flex-col
+      justify-between
+      h-full
+    ">
+
+      {/* LOGO */}
+      <div>
+
+        <h2 className="
+          text-xl
+          font-semibold
+          tracking-tight
+          mb-8
+          px-2
+        ">
+
+          inToBio
+
+        </h2>
+
+
+
+        {/* NAV */}
+        <nav className="space-y-1">
+
+          {links.map(link => {
+
+            const Icon =
+              link.icon;
+
             return (
-              <NavLink key={idx} className={'flex gap-3'}>
-                <Icon size={23}/>
+
+              <NavLink
+                key={link.path}
+                to={link.path}
+
+                className={({isActive}) =>
+
+                  `
+                    flex items-center gap-3
+                    px-3 py-2.5
+                    rounded-xl
+
+                    text-sm
+
+                    transition
+
+                    ${isActive
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "text-gray-500 hover:bg-gray-100"
+                    }
+                  `
+                }
+              >
+
+                <Icon size={18} />
+
                 {link.name}
+
               </NavLink>
+
             );
+
           })}
-        </div>
+
+        </nav>
+
       </div>
+
+
+
+      {/* FOOTER */}
+      <div className="space-y-1">
+
+        <button className="
+          flex items-center gap-3
+          w-full
+
+          px-3 py-2.5
+          rounded-xl
+
+          text-sm
+          text-gray-500
+
+          hover:bg-gray-100
+        ">
+
+          <FiHelpCircle />
+
+          Help
+
+        </button>
+
+
+
+        <button className="
+          flex items-center gap-3
+          w-full
+
+          px-3 py-2.5
+          rounded-xl
+
+          text-sm
+          text-red-500
+
+          hover:bg-red-50
+        ">
+
+          <FiLogOut />
+
+          Log out
+
+        </button>
+
+      </div>
+
     </div>
+
   );
+
 };
 
 export default Sidebar;
