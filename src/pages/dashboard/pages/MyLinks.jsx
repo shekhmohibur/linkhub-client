@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import {
   DndContext,
   closestCenter
@@ -26,6 +25,17 @@ import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { useData } from "../../../contexts/DataContext";
 
 
+// helper
+const isValidUrl = (url) => {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+
 const SortableItem = ({
   link,
   updateLink,
@@ -49,7 +59,6 @@ const SortableItem = ({
 
 
   return (
-
     <div
       ref={setNodeRef}
       style={style}
@@ -63,32 +72,28 @@ const SortableItem = ({
       "
     >
 
+      {/* drag */}
       <FaGripLines
         {...attributes}
         {...listeners}
-        className="text-gray-300 cursor-grab"
+        className="text-gray-300 cursor-grab active:cursor-grabbing"
       />
 
 
       {/* icon */}
       <div className="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl">
-
         <FaGlobe size={14} />
-
       </div>
 
 
-      {/* text */}
+      {/* inputs */}
       <div className="flex-1">
 
         <input
+          placeholder="Title"
           value={link.title}
           onChange={(e) =>
-            updateLink(
-              link.id,
-              "title",
-              e.target.value
-            )
+            updateLink(link.id, { title: e.target.value })
           }
           className="
             w-full font-medium text-gray-800
@@ -99,19 +104,20 @@ const SortableItem = ({
 
 
         <input
+          placeholder="https://example.com"
           value={link.url}
           onChange={(e) =>
-            updateLink(
-              link.id,
-              "url",
-              e.target.value
-            )
+            updateLink(link.id, { url: e.target.value })
           }
-          className="
-            w-full text-sm text-gray-400
+          className={`
+            w-full text-sm
             bg-transparent focus:outline-none
-            focus:text-indigo-500
-          "
+            ${
+              link.url && !isValidUrl(link.url)
+                ? "text-red-400"
+                : "text-gray-400 focus:text-indigo-500"
+            }
+          `}
         />
 
       </div>
@@ -121,12 +127,11 @@ const SortableItem = ({
       <div className="flex items-center gap-2">
 
         <button
+          title="show / hide"
           onClick={() =>
-            updateLink(
-              link.id,
-              "visible",
-              !link.visible
-            )
+            updateLink(link.id, {
+              visible: !link.visible
+            })
           }
           className="text-gray-400 hover:text-indigo-600"
         >
@@ -139,6 +144,7 @@ const SortableItem = ({
 
 
         <button
+          title="delete"
           onClick={() =>
             deleteLink(link.id)
           }
@@ -156,7 +162,6 @@ const SortableItem = ({
       </div>
 
     </div>
-
   );
 
 };
@@ -165,53 +170,48 @@ const SortableItem = ({
 
 const MyLinks = () => {
 
-  const { links, addLink, updateLink, deleteLink, reorderLinks } = useData();
+  const {
+    links,
+    addLink,
+    updateLink,
+    deleteLink,
+    reorderLinks
+  } = useData();
 
-  const handleDragEnd =
-    event => {
 
-      const {
-        active,
-        over
-      } = event;
 
-      if (
-        active.id !== over.id
-      ) {
+  const handleDragEnd = (event) => {
 
-        const oldIndex =
-          links.findIndex(
-            i =>
-              i.id ===
-              active.id
-          );
+    const { active, over } = event;
 
-        const newIndex =
-          links.findIndex(
-            i =>
-              i.id ===
-              over.id
-          );
+    // prevent crash
+    if (!over || active.id === over.id)
+      return;
 
-        const newOrder = arrayMove(
-          links,
-          oldIndex,
-          newIndex
-        );
+    const oldIndex =
+      links.findIndex(i => i.id === active.id);
 
-        reorderLinks(newOrder);
+    const newIndex =
+      links.findIndex(i => i.id === over.id);
 
-      }
+    reorderLinks(
+      arrayMove(links, oldIndex, newIndex)
+    );
 
-    };
+  };
+
 
   const handleAddLink = () => {
+
     addLink({
-      title: "New Link",
-      url: "https://",
+      id: crypto.randomUUID(),
+      title: "",
+      url: "",
       visible: true
     });
+
   };
+
 
   return (
 
@@ -223,54 +223,49 @@ const MyLinks = () => {
         <div className="mb-8">
 
           <h1 className="text-2xl font-semibold text-gray-800">
-
             My Links
-
           </h1>
 
           <p className="text-gray-500 text-sm mt-1">
-
             Build your inToBio page
-
           </p>
 
         </div>
 
 
         <DndContext
-          collisionDetection={
-            closestCenter
-          }
-          onDragEnd={
-            handleDragEnd
-          }
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
 
           <SortableContext
-            items={links}
-            strategy={
-              verticalListSortingStrategy
-            }
+            items={links.map(l => l.id)}
+            strategy={verticalListSortingStrategy}
           >
 
             <div className="space-y-3">
 
-              {links.map(
-                link => (
-
-                  <SortableItem
-                    key={link.id}
-                    link={link}
-                    updateLink={
-                      (id, field, value) => updateLink(id, { [field]: value })
-                    }
-                    deleteLink={
-                      deleteLink
-                    }
-                  />
-
+              {
+                links.length === 0 && (
+                  <div className="
+                    text-center py-10 text-gray-400
+                    border border-dashed rounded-2xl
+                  ">
+                    No links yet
+                  </div>
                 )
-              )}
+              }
+
+              {links.map(link => (
+
+                <SortableItem
+                  key={link.id}
+                  link={link}
+                  updateLink={updateLink}
+                  deleteLink={deleteLink}
+                />
+
+              ))}
 
 
               <button
@@ -287,7 +282,6 @@ const MyLinks = () => {
               >
 
                 <FaPlus />
-
                 Add link
 
               </button>
@@ -301,105 +295,150 @@ const MyLinks = () => {
       </div>
 
 
-      {/* phone preview */}
-      <div className="flex justify-center">
 
+      {/* preview */}
+{/* phone preview */}
+<div className="flex justify-center">
+
+  {/* phone frame */}
+  <div className="
+    relative
+    w-[340px]
+    h-[680px]
+    bg-black
+    rounded-[48px]
+    p-[10px]
+    shadow-2xl
+  ">
+
+    {/* screen */}
+    <div className="
+      relative
+      w-full
+      h-full
+      bg-white
+      rounded-[38px]
+      overflow-hidden
+    ">
+
+      {/* notch */}
+      <div className="
+        absolute
+        top-0
+        left-1/2
+        -translate-x-1/2
+        w-[160px]
+        h-[30px]
+        bg-black
+        rounded-b-2xl
+        z-20
+      " />
+
+      {/* speaker */}
+      <div className="
+        absolute
+        top-2
+        left-1/2
+        -translate-x-1/2
+        w-16
+        h-1
+        bg-gray-700
+        rounded-full
+        z-30
+      " />
+
+      {/* content scroll */}
+      <div className="
+        h-full
+        overflow-y-auto
+        pb-10
+      ">
+
+        {/* cover */}
         <div className="
-          w-[320px]
+          h-36
+          bg-gradient-to-r
+          from-indigo-500
+          to-purple-500
+        " />
+
+        {/* avatar */}
+        <div className="
+          w-24
+          h-24
           bg-white
-          rounded-[42px]
-          border border-gray-200
-          shadow-xl
-          p-6
-        ">
+          rounded-full
+          border-4 border-white
+          shadow
+          -mt-12
+          mx-auto
+        " />
 
-          <div className="
-            h-32
-            bg-gradient-to-r
-            from-indigo-500
-            to-purple-500
-            rounded-3xl
-          " />
+        {/* username */}
+        <div className="text-center mt-3 px-6">
 
+          <h3 className="font-semibold text-lg">
+            @username
+          </h3>
 
-          <div className="
-            w-20 h-20
-            bg-white
-            rounded-full
-            border-4 border-white
-            shadow
-            -mt-10 mx-auto
-          " />
-
-
-          <div className="text-center mt-3">
-
-            <h3 className="font-semibold">
-
-              @username
-
-            </h3>
-
-            <p className="text-sm text-gray-500">
-
-              digital creator
-
-            </p>
-
-          </div>
-
-
-          <div className="mt-6 space-y-3">
-
-            {links
-
-              .filter(
-                l =>
-                  l.visible
-              )
-
-              .map(
-                link => (
-
-                  <div
-                    key={
-                      link.id
-                    }
-                    className="
-                      bg-gradient-to-r
-                      from-indigo-50
-                      to-purple-50
-                      text-indigo-700
-                      text-center
-                      py-2.5
-                      rounded-xl
-                      font-medium
-                      hover:scale-[1.02]
-                      transition
-                    "
-                  >
-
-                    {
-                      link.title
-                    }
-
-                  </div>
-
-                )
-              )}
-
-          </div>
-
-
-          <p className="text-center text-xs text-gray-400 mt-6">
-
-            inToBio
-
+          <p className="text-sm text-gray-500">
+            digital creator
           </p>
 
         </div>
 
+        {/* links */}
+        <div className="mt-6 px-6 space-y-3">
+
+          {
+            links
+              .filter(l => l.visible)
+              .map(link => (
+
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    block
+                    bg-gradient-to-r
+                    from-indigo-50
+                    to-purple-50
+                    text-indigo-700
+                    text-center
+                    py-3
+                    rounded-xl
+                    font-medium
+                    shadow-sm
+                    hover:scale-[1.02]
+                    transition
+                  "
+                >
+
+                  {link.title || "Untitled"}
+
+                </a>
+
+              ))
+          }
+
+        </div>
+
+        {/* footer */}
+        <p className="text-center text-xs text-gray-400 mt-8">
+
+          inToBio
+
+        </p>
+
       </div>
+
+    </div>
+
+  </div>
+
+</div>
 
     </div>
 

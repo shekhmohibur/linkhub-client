@@ -6,6 +6,11 @@
   --font-manrope: "Manrope", sans-serif;
   --font-inter: "Inter", sans-serif;
 }
+
+html{
+scroll-behavior:smooth;
+}
+
 .hero-gradient {
   background: linear-gradient(135deg, #4e44d4 0%, #9895ff 100%);
 }

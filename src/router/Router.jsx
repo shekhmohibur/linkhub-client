@@ -11,6 +11,8 @@ import Settings from "../pages/dashboard/pages/Settings";
 import Analytics from "../pages/dashboard/pages/Analytics";
 import Profile from "../pages/dashboard/pages/Profile";
 import NeedHelp from "../pages/dashboard/pages/NeedHelp";
+import Terms from "../components/common/Terms";
+import Privacy from "../components/common/Privacy";
 
 const Router = createBrowserRouter([
   {
@@ -20,6 +22,8 @@ const Router = createBrowserRouter([
       { index: true, path: "/", Component: Home },
       { path: "/login", Component: Login },
       { path: "/register", Component: Register },
+      { path: "/terms", Component: Terms },
+      { path: "/privacy", Component: Privacy },
     ],
   },
   {

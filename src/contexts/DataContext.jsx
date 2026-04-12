@@ -6,7 +6,7 @@ import {
   useCallback,
 } from "react";
 import { profileAPI, linksAPI, analyticsAPI } from "../services/api";
-import { useAuth } from "./AuthContext";
+import useAuth from "../hooks/useAuth";
 
 const DataContext = createContext();
 

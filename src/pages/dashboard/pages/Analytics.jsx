@@ -143,7 +143,7 @@ const Analytics = () => {
         </div>
 
         <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={320}>
             <AreaChart
               data={analyticsData}
               margin={{ top: 10, right: 30, left: 0, bottom: 0 }}

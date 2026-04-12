@@ -1,66 +1,153 @@
+import Button from "../../components/shared/Button";
+
 const Cta = () => {
+
+
   return (
-    <section className="bg-[#f5f3fb] px-4 sm:px-6 lg:px-8 py-24">
-      <div className="max-w-6xl mx-auto">
+    <section
+      className="
+
+bg-[#f5f3fb]
+
+px-4 sm:px-6 lg:px-8
+
+py-20 md:py-28
+
+"
+    >
+      <div
+        className="
+
+max-w-6xl
+
+mx-auto
+
+"
+      >
         <div
           className="
-            rounded-[42px]
-            px-6 md:px-12
-            py-16 md:py-24
-            text-center
 
-            bg-linear-to-r
-            from-indigo-600
-            to-purple-400
-          "
+relative
+
+rounded-[40px]
+
+px-6 md:px-12
+
+py-14 md:py-20
+
+text-center
+
+overflow-hidden
+
+bg-gradient-to-r
+
+from-indigo-600
+
+to-purple-400
+
+"
         >
-          <div className="max-w-3xl mx-auto">
+          {/* subtle glow */}
+
+          <div
+            className="
+
+absolute
+
+inset-0
+
+bg-white/5
+
+"
+          />
+
+          <div
+            className="
+
+relative
+
+max-w-2xl
+
+mx-auto
+
+space-y-6
+
+"
+          >
             {/* heading */}
+
             <h2
               className="
-                text-3xl
-                sm:text-4xl
-                md:text-5xl
-                font-semibold
-                text-white
-                leading-tight
-                mb-6
-              "
+
+text-3xl
+
+sm:text-4xl
+
+md:text-5xl
+
+font-semibold
+
+text-white
+
+leading-tight
+
+tracking-tight
+
+"
             >
               Ready to curate your universe?
             </h2>
 
             {/* description */}
+
             <p
               className="
-                text-white/90
-                text-base
-                md:text-lg
-                mb-10
-              "
+
+text-white/90
+
+text-sm
+
+sm:text-base
+
+md:text-lg
+
+leading-relaxed
+
+"
             >
-              Join the new era of bio links and stand out from the noise with a
-              truly high-end editorial presence.
+              Create a premium bio page that captures attention, builds trust,
+              and grows your audience.
             </p>
 
             {/* button */}
-            <button
-              className="
-                px-10
-                py-4
-                rounded-2xl
-                cursor-pointer
 
-                bg-white
-                text-indigo-700
-                font-semibold
+            <div className="pt-2">
+              <Button
+                label="Claim your URL"
+                to="/register"
+                btnStyle="
 
-                hover:bg-gray-100
-                transition
-              "
-            >
-              Claim Your URL Now
-            </button>
+bg-white
+
+text-indigo-700
+
+px-7 py-3
+
+text-sm md:text-base
+
+font-semibold
+
+hover:bg-gray-100
+
+shadow-md
+
+hover:shadow-lg
+
+transition
+
+"
+              />
+            </div>
           </div>
         </div>
       </div>

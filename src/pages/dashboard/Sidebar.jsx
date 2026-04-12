@@ -124,9 +124,11 @@ const Sidebar = () => {
       {/* FOOTER */}
       <div className="space-y-1">
 
-        <button className="
-          flex items-center gap-3
-          w-full
+        <NavLink
+          to={'/dashboard/help'}
+          className="
+            flex items-center gap-3
+            w-full
 
           px-3 py-2.5
           rounded-xl
@@ -141,7 +143,7 @@ const Sidebar = () => {
 
           Help
 
-        </button>
+        </NavLink>
 
 
 

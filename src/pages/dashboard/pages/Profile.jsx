@@ -1,175 +1,128 @@
 import { useEffect, useState } from "react";
 
-import {
-  FaInstagram,
-  FaYoutube,
-  FaTwitter,
-  FaGlobe,
-  FaUpload,
-} from "react-icons/fa";
+import { FaInstagram, FaYoutube, FaTwitter, FaGlobe } from "react-icons/fa";
 
 import { useData } from "../../../contexts/DataContext";
-
-// theme config (no Tailwind dynamic bug)
-const themes = {
-  indigo: {
-    gradient: "from-indigo-500 to-purple-500",
-    soft: "bg-indigo-50 text-indigo-600",
-    solid: "bg-indigo-600 text-white",
-    outline: "border border-indigo-400 text-indigo-600",
-  },
-
-  purple: {
-    gradient: "from-purple-500 to-fuchsia-500",
-    soft: "bg-purple-50 text-purple-600",
-    solid: "bg-purple-600 text-white",
-    outline: "border border-purple-400 text-purple-600",
-  },
-
-  blue: {
-    gradient: "from-blue-500 to-cyan-500",
-    soft: "bg-blue-50 text-blue-600",
-    solid: "bg-blue-600 text-white",
-    outline: "border border-blue-400 text-blue-600",
-  },
-
-  emerald: {
-    gradient: "from-emerald-500 to-teal-500",
-    soft: "bg-emerald-50 text-emerald-600",
-    solid: "bg-emerald-600 text-white",
-    outline: "border border-emerald-400 text-emerald-600",
-  },
-
-  rose: {
-    gradient: "from-rose-500 to-pink-500",
-    soft: "bg-rose-50 text-rose-600",
-    solid: "bg-rose-600 text-white",
-    outline: "border border-rose-400 text-rose-600",
-  },
-
-  orange: {
-    gradient: "from-orange-500 to-amber-500",
-    soft: "bg-orange-50 text-orange-600",
-    solid: "bg-orange-600 text-white",
-    outline: "border border-orange-400 text-orange-600",
-  },
-};
+import { themes } from "../../../config/themes";
 
 const Profile = () => {
-  const { profile, updateProfile } = useData();
+  const { profile, updateProfile, links } = useData();
 
-  const defaultProfile = {
-    name: "Your Name",
-
-    username: "username",
-
-    bio: "Creator • Designer • Developer",
-
+  const [data, setData] = useState({
+    name: "",
+    username: "",
+    bio: "",
     avatar: "https://i.pravatar.cc/150",
-
     theme: "indigo",
-
     buttonStyle: "solid",
-
     socials: {
       instagram: "",
-
       youtube: "",
-
       twitter: "",
-
       website: "",
     },
-  };
+  });
 
-  const [data, setData] = useState(profile || defaultProfile);
-
+  /* auto load */
   useEffect(() => {
-    if (profile && JSON.stringify(profile) !== JSON.stringify(data)) {
-      setData(profile);
-    }
+    if (profile) setData(profile);
   }, [profile]);
 
-  const handleUpdateProfile = (updates) => {
-    const newData = { ...data, ...updates };
-    setData(newData);
-    updateProfile(newData);
+  /* auto save */
+  useEffect(() => {
+    updateProfile(data);
+  }, [data]);
+
+  /* update helper */
+  const update = (field, value) => {
+    setData((prev) => ({
+      ...prev,
+
+      [field]: value,
+    }));
+  };
+
+  const updateSocial = (key, value) => {
+    setData((prev) => ({
+      ...prev,
+
+      socials: {
+        ...prev.socials,
+
+        [key]: value,
+      },
+    }));
   };
 
   const theme = themes[data.theme];
 
   return (
-    <div className="grid lg:grid-cols-2 gap-14">
-      {/* EDITOR */}
+    <div className="grid lg:grid-cols-2 gap-12">
+      {/* LEFT */}
+
       <div className="space-y-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Profile Design
-        </h1>
+        <h1 className="text-2xl font-semibold">Profile</h1>
 
-        {/* profile card */}
-        <div className="bg-white p-6 rounded-3xl border shadow-sm space-y-5">
-          <div className="flex items-center gap-4">
-            <img
-              src={data.avatar}
-              className="w-16 h-16 rounded-full object-cover ring-4 ring-gray-100"
-            />
+        {/* avatar */}
 
-            <label className="cursor-pointer text-sm px-3 py-2 rounded-xl border hover:border-gray-400">
-              Upload photo
-              <input
-                type="file"
-                hidden
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      handleUpdateProfile({ avatar: reader.result });
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                }}
-              />
-            </label>
-          </div>
+        <div className="bg-white p-6 rounded-3xl border space-y-4">
+          <img
+            src={data.avatar}
+            className="w-20 h-20 rounded-full object-cover"
+          />
+
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files[0];
+
+              const reader = new FileReader();
+
+              reader.onloadend = () => update("avatar", reader.result);
+
+              if (file) reader.readAsDataURL(file);
+            }}
+          />
 
           <input
             value={data.name}
-            onChange={(e) => handleUpdateProfile({ name: e.target.value })}
-            placeholder="name"
-            className="w-full bg-gray-50 px-4 py-2.5 rounded-xl"
+            onChange={(e) => update("name", e.target.value)}
+            placeholder="Name"
+            className="w-full bg-gray-50 px-4 py-2 rounded-xl"
           />
 
           <input
             value={data.username}
-            onChange={(e) => handleUpdateProfile({ username: e.target.value })}
-            placeholder="username"
-            className="w-full bg-gray-50 px-4 py-2.5 rounded-xl"
+            onChange={(e) => update("username", e.target.value)}
+            placeholder="Username"
+            className="w-full bg-gray-50 px-4 py-2 rounded-xl"
           />
 
           <textarea
             value={data.bio}
-            onChange={(e) => handleUpdateProfile({ bio: e.target.value })}
-            placeholder="bio"
-            className="w-full bg-gray-50 px-4 py-2.5 rounded-xl"
+            onChange={(e) => update("bio", e.target.value)}
+            placeholder="Bio"
+            className="w-full bg-gray-50 px-4 py-2 rounded-xl"
           />
         </div>
 
-        {/* theme */}
-        <div className="bg-white p-6 rounded-3xl border shadow-sm">
-          <h2 className="text-sm text-gray-500 mb-3">Theme</h2>
+        {/* themes */}
 
-          <div className="flex gap-3">
-            {Object.keys(themes).map((color) => (
+        <div className="bg-white p-6 rounded-3xl border">
+          <h2 className="text-sm mb-3 text-gray-500">Themes</h2>
+
+          <div className="grid grid-cols-6 gap-3">
+            {Object.entries(themes).map(([key, t]) => (
               <button
-                key={color}
-                onClick={() => handleUpdateProfile({ theme: color })}
+                key={key}
+                onClick={() => update("theme", key)}
                 className={`
-w-9 h-9 rounded-xl
 
-bg-linear-to-br ${themes[color].gradient}
+w-10 h-10 rounded-xl
 
-${data.theme === color ? "ring-2 ring-offset-2" : ""}
+bg-linear-to-br ${t.gradient}
+
+${data.theme === key ? "ring-2 ring-offset-2" : ""}
 
 `}
               />
@@ -178,20 +131,20 @@ ${data.theme === color ? "ring-2 ring-offset-2" : ""}
         </div>
 
         {/* button style */}
-        <div className="bg-white p-6 rounded-3xl border shadow-sm">
-          <h2 className="text-sm text-gray-500 mb-3">Button style</h2>
+
+        <div className="bg-white p-6 rounded-3xl border">
+          <h2 className="text-sm mb-3 text-gray-500">Button style</h2>
 
           <div className="flex gap-2">
             {["solid", "soft", "outline"].map((style) => (
               <button
                 key={style}
-                onClick={() => handleUpdateProfile({ buttonStyle: style })}
+                onClick={() => update("buttonStyle", style)}
                 className={`
-px-4 py-2 rounded-xl text-sm border
 
-${
-  data.buttonStyle === style ? "border-gray-900 text-gray-900" : "text-gray-400"
-}
+px-4 py-2 rounded-xl border text-sm
+
+${data.buttonStyle === style ? "border-black" : "text-gray-400"}
 
 `}
               >
@@ -201,13 +154,14 @@ ${
           </div>
         </div>
 
-        {/* social */}
-        <div className="bg-white p-6 rounded-3xl border shadow-sm space-y-3">
+        {/* socials */}
+
+        <div className="bg-white p-6 rounded-3xl border space-y-3">
           <h2 className="text-sm text-gray-500">Social links</h2>
 
           {Object.keys(data.socials).map((key) => (
-            <div key={key} className="flex items-center gap-2">
-              <span className="text-gray-400 w-6">
+            <div key={key} className="flex gap-2">
+              <span className="text-gray-400">
                 {key === "instagram" && <FaInstagram />}
 
                 {key === "youtube" && <FaYoutube />}
@@ -219,14 +173,7 @@ ${
 
               <input
                 value={data.socials[key]}
-                onChange={(e) =>
-                  handleUpdateProfile({
-                    socials: {
-                      ...data.socials,
-                      [key]: e.target.value,
-                    },
-                  })
-                }
+                onChange={(e) => updateSocial(key, e.target.value)}
                 placeholder={key}
                 className="w-full bg-gray-50 px-3 py-2 rounded-lg"
               />
@@ -235,64 +182,97 @@ ${
         </div>
       </div>
 
-      {/* LIVE PREVIEW */}
+      {/* PHONE */}
+
       <div className="flex justify-center">
-        <div className="w-85 max-h-fit fixed p-6 rounded-[42px] border bg-white shadow-xl">
-          {/* cover */}
+        <div
+          className="
+
+relative
+
+w-[340px]
+
+h-[690px]
+
+bg-black
+
+rounded-[50px]
+
+p-[10px]
+
+shadow-2xl
+
+"
+        >
           <div
             className={`
 
-h-36
+relative
 
-rounded-3xl
+w-full
 
-bg-linear-to-br ${theme.gradient}
+h-full
+
+rounded-[40px]
+
+overflow-hidden
+
+${theme.bg}
+
+${theme.text}
 
 `}
-          />
+          >
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[150px] h-[28px] bg-black rounded-b-xl" />
 
-          {/* avatar */}
-          <img
-            src={data.avatar}
-            className="w-20 h-20 rounded-full border-4 border-white shadow -mt-10 mx-auto"
-          />
+            <div className="overflow-y-auto h-full pb-10">
+              <div className={`h-40 bg-linear-to-br ${theme.gradient}`} />
 
-          <div className="text-center mt-3">
-            <h3 className="font-semibold text-lg">{data.name}</h3>
+              <img
+                src={data.avatar}
+                className="w-24 h-24 rounded-full border-4 border-white shadow -mt-12 mx-auto"
+              />
 
-            <p className="text-gray-500 text-sm">@{data.username}</p>
+              <div className="text-center mt-3 px-6">
+                <h3 className="font-semibold text-lg">
+                  {data.name || "Your Name"}
+                </h3>
 
-            <p className="mt-2 text-sm">{data.bio}</p>
-          </div>
+                <p className="text-sm opacity-70">
+                  @{data.username || "username"}
+                </p>
 
-          {/* social icons */}
-          <div className="flex justify-center gap-4 mt-4 text-gray-500">
-            {data.socials.instagram && <FaInstagram />}
+                <p className="mt-2 text-sm opacity-80">{data.bio || "bio"}</p>
+              </div>
 
-            {data.socials.youtube && <FaYoutube />}
+              <div className="flex justify-center gap-4 mt-4 text-xl">
+                {data.socials.instagram && <FaInstagram />}
 
-            {data.socials.twitter && <FaTwitter />}
+                {data.socials.youtube && <FaYoutube />}
 
-            {data.socials.website && <FaGlobe />}
-          </div>
+                {data.socials.twitter && <FaTwitter />}
 
-          {/* links */}
-          <div className="space-y-3 mt-6">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className={`
+                {data.socials.website && <FaGlobe />}
+              </div>
 
-py-2.5
+              <div className="px-6 mt-6 space-y-3">
+                {links
+                  ?.filter((l) => l.visible)
 
-text-center
+                  .map((link) => (
+                    <div
+                      key={link.id}
+                      className={`
+
+py-3
 
 rounded-xl
+
+text-center
 
 font-medium
 
 transition
-
 
 ${data.buttonStyle === "solid" && theme.solid}
 
@@ -301,13 +281,15 @@ ${data.buttonStyle === "soft" && theme.soft}
 ${data.buttonStyle === "outline" && theme.outline}
 
 `}
-              >
-                Sample link
+                    >
+                      {link.title}
+                    </div>
+                  ))}
               </div>
-            ))}
-          </div>
 
-          <p className="text-center text-xs text-gray-400 mt-6">inToBio</p>
+              <p className="text-center text-xs opacity-40 mt-8">inToBio</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

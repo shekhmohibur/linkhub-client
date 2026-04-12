@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { FiMail, FiLock, FiUser, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaGoogle } from "react-icons/fa";
-import { useAuth } from "../../contexts/AuthContext";
+
 import { motion } from "framer-motion";
+import useAuth from "../../hooks/useAuth";
 
 export default function Register() {
   const [formData, setFormData] = useState({

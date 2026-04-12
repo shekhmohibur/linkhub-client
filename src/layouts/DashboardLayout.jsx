@@ -1,154 +1,221 @@
 import { useState, useRef, useEffect } from "react";
-import { Outlet } from "react-router";
+import { NavLink, Outlet } from "react-router";
 
 import Sidebar from "../pages/dashboard/Sidebar";
 import BottomNav from "../pages/dashboard/BottomNav";
 
 import { FiHelpCircle, FiLogOut } from "react-icons/fi";
-import { useAuth } from "../contexts/AuthContext";
+
+import useAuth from "../hooks/useAuth";
 
 const DashboardLayout = () => {
   const { logout } = useAuth();
+
+  /* avatar dropdown */
   const [open, setOpen] = useState(false);
 
-  const ref = useRef();
+  const dropdownRef = useRef(null);
 
-  // close dropdown on outside click
+  /* close dropdown when clicking outside */
   useEffect(() => {
-    const handleClick = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpen(false);
       }
     };
 
-    document.addEventListener("click", handleClick);
+    document.addEventListener("mousedown", handleClickOutside);
 
-    return () => document.removeEventListener("click", handleClick);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <div
       className="
-      min-h-screen
-      bg-gradient-to-br
-      from-[#f8fafc]
-      via-[#eef2ff]
-      to-[#f1f5f9]
-    "
+
+min-h-screen
+
+bg-gray-50
+
+"
     >
-      <div className="flex">
+      <div
+        className="
+
+flex
+
+min-h-screen
+
+"
+      >
         {/* DESKTOP SIDEBAR */}
+
         <aside
           className="
-          hidden lg:flex
-          w-[260px]
-          p-4
-        "
+
+hidden lg:flex
+
+w-65
+
+border-r
+
+bg-white
+
+"
         >
           <div
             className="
-            w-full
-            rounded-2xl
-            bg-white/70
-            backdrop-blur-xl
-            border
-            shadow-lg
-            p-4
-            sticky top-4
-            h-[calc(100vh-32px)]
-          "
+
+w-full
+
+sticky top-0
+
+h-screen
+
+p-5
+
+overflow-y-auto
+
+"
           >
             <Sidebar />
           </div>
         </aside>
 
-        {/* MAIN */}
-        <div className="flex-1">
+        {/* MAIN AREA */}
+
+        <div
+          className="
+
+flex-1
+
+flex flex-col
+
+min-h-screen
+
+"
+        >
           {/* MOBILE HEADER */}
+
           <header
             className="
-            lg:hidden
-            h-16
-            flex items-center justify-between
-            px-4
-            bg-white/70
-            backdrop-blur-xl
-            border-b
-            sticky top-0
-            z-40
-          "
+
+lg:hidden
+
+h-14
+
+flex items-center justify-between
+
+px-4
+
+bg-white
+
+border-b
+
+sticky top-0
+
+z-40
+
+"
           >
             <h1
               className="
-              font-semibold
-              tracking-tight
-            "
+
+font-semibold
+
+"
             >
               inToBio
             </h1>
 
-            {/* avatar dropdown */}
-            <div ref={ref} className="relative">
+            {/* avatar */}
+
+            <div ref={dropdownRef} className="relative">
               <img
                 src="https://i.pravatar.cc/40"
                 onClick={() => setOpen(!open)}
                 className="
-                  w-9 h-9
-                  rounded-full
-                  cursor-pointer
-                  ring-2 ring-white
-                "
+
+w-9 h-9
+
+rounded-full
+
+cursor-pointer
+
+"
               />
 
               {/* dropdown */}
+
               {open && (
                 <div
                   className="
-                  absolute right-0 mt-2
-                  w-44
-                  rounded-xl
 
-                  bg-white/90
-                  backdrop-blur-xl
+absolute right-0
 
-                  border
-                  shadow-lg
+mt-2
 
-                  p-1
-                "
+w-44
+
+bg-white
+
+rounded-xl
+
+shadow-md
+
+border
+
+p-1
+
+"
                 >
-                  <button
+                  <NavLink
                     className="
-                    flex items-center gap-2
-                    w-full
 
-                    px-3 py-2
-                    rounded-lg
+flex items-center gap-2
 
-                    text-sm
-                    text-gray-600
+w-full
 
-                    hover:bg-gray-100
-                  "
+px-3 py-2
+
+rounded-lg
+
+text-sm
+
+text-gray-600
+
+hover:bg-gray-50
+
+cursor-pointer
+
+"
+to={'/dashboard/help'}
                   >
                     <FiHelpCircle />
                     Help
-                  </button>
+                  </NavLink>
 
                   <button
                     onClick={logout}
                     className="
-                    flex items-center gap-2
-                    w-full
 
-                    px-3 py-2
-                    rounded-lg
+flex items-center gap-2
 
-                    text-sm
-                    text-red-500
+w-full
 
-                    hover:bg-red-50
-                  "
+px-3 py-2
+
+rounded-lg
+
+text-sm
+
+text-red-500
+
+hover:bg-red-50
+
+cursor-pointer
+
+"
                   >
                     <FiLogOut />
                     Logout
@@ -158,17 +225,28 @@ const DashboardLayout = () => {
             </div>
           </header>
 
-          {/* PAGE */}
+          {/* PAGE CONTENT */}
+
           <main
             className="
-            p-4
-            lg:p-10
 
-            pb-28 lg:pb-10
+flex-1
 
-            max-w-7xl
-            mx-auto
-          "
+p-4
+
+lg:p-10
+
+pb-24
+
+lg:pb-10
+
+max-w-7xl
+
+w-full
+
+mx-auto
+
+"
           >
             <Outlet />
           </main>
@@ -176,7 +254,24 @@ const DashboardLayout = () => {
       </div>
 
       {/* MOBILE NAV */}
-      <div className="lg:hidden">
+
+      <div
+        className="
+
+lg:hidden
+
+fixed bottom-0
+
+left-0 right-0
+
+bg-white
+
+border-t
+
+z-40
+
+"
+      >
         <BottomNav />
       </div>
     </div>

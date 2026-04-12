@@ -5,20 +5,35 @@ import Pricing from "./Pricing";
 import ToolkitSection from "./Toolkit";
 
 const Home = () => {
-  return (
-    <div>
-      {/* hero section */}
-      <Hero />
-      {/* Philosophy section */}
-      <PhilosophySection />
-      {/* Toolkit section */}
-      <ToolkitSection />
-      {/* Pricing section */}
-      <Pricing />
-      {/* Cta Section */}
-      <Cta/>
-    </div>
-  );
+
+return (
+
+<div>
+
+<section id="hero">
+<Hero/>
+</section>
+
+<section id="features">
+<PhilosophySection/>
+</section>
+
+<section id="showcase">
+<ToolkitSection/>
+</section>
+
+<section id="pricing">
+<Pricing/>
+</section>
+
+<section id="cta">
+<Cta/>
+</section>
+
+</div>
+
+);
+
 };
 
 export default Home;
