@@ -1,109 +1,131 @@
-import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import AuthContext from "./AuthContext";
 
 import { authAPI } from "../services/api";
 
+import { queryClient } from "../utils/queryClient";
+
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  /* observe user */
 
-  const [loading, setLoading] = useState(true);
+  const userQuery = useQuery({
+    queryKey: ["user"],
 
-  /* initialize auth */
-
-  useEffect(() => {
-    const initAuth = async () => {
+    queryFn: async () => {
       const token = localStorage.getItem("authToken");
 
-      if (token) {
-        try {
-          const response = await authAPI.getProfile();
+      if (!token) return null;
 
-          setUser(response.data);
-        } catch {
-          localStorage.removeItem("authToken");
-        }
-      }
+      const res = await authAPI.getProfile();
 
-      setLoading(false);
-    };
+      return res.data.user;
+    },
 
-    initAuth();
-  }, []);
+    retry: false,
+  });
 
-  /* login */
+  /* email login */
 
-  const login = async (credentials) => {
-    try {
-      const response = await authAPI.login(credentials);
+  const loginMutation = useMutation({
+    mutationFn: authAPI.login,
 
-      const { token, user: userData } = response.data;
+    onSuccess: (res) => {
+      localStorage.setItem(
+        "authToken",
 
-      localStorage.setItem("authToken", token);
+        res.data.token,
+      );
 
-      setUser(userData);
-
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-
-        error: error.response?.data?.message || "Login failed",
-      };
-    }
-  };
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
+    },
+  });
 
   /* register */
 
-  const register = async (userData) => {
-    try {
-      const response = await authAPI.register(userData);
+  const registerMutation = useMutation({
+    mutationFn: authAPI.register,
 
-      const {
-        token,
+    onSuccess: (res) => {
+      localStorage.setItem(
+        "authToken",
 
-        user: newUser,
-      } = response.data;
+        res.data.token,
+      );
 
-      localStorage.setItem("authToken", token);
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
+    },
+  });
 
-      setUser(newUser);
+  /* google login */
 
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
+  const googleMutation = useMutation({
+    mutationFn: authAPI.googleLogin,
 
-        error: error.response?.data?.message || "Registration failed",
-      };
-    }
-  };
+    onSuccess: (res) => {
+      localStorage.setItem(
+        "authToken",
+
+        res.data.token,
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
+    },
+  });
 
   /* logout */
 
-  const logout = () => {
+  const logout = async () => {
+    await authAPI.logout();
+
     localStorage.removeItem("authToken");
 
-    setUser(null);
+    queryClient.setQueryData(
+      ["user"],
 
-    authAPI.logout().catch(() => {});
+      null,
+    );
   };
 
-  const value = {
-    user,
+  return (
+    <AuthContext.Provider
+      value={{
+        /* observed state */
 
-    loading,
+        user: userQuery.data,
 
-    login,
+        isAuthenticated: !!userQuery.data,
 
-    register,
+        userLoading: userQuery.isLoading,
 
-    logout,
+        /* actions */
 
-    isAuthenticated: !!user,
-  };
+        login: loginMutation.mutateAsync,
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+        register: registerMutation.mutateAsync,
+
+        googleLogin: googleMutation.mutateAsync,
+
+        logout,
+
+        /* loading states */
+
+        loginLoading: loginMutation.isPending,
+
+        registerLoading: registerMutation.isPending,
+
+        googleLoading: googleMutation.isPending,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

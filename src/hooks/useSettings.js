@@ -1,54 +1,55 @@
-// hooks/useSettings.js
-
-import { useEffect, useState } from "react";
-
-const defaultSettings = {
-  username: "username",
-
-  domain: "",
-
-  isPublic: true,
-
-  allowIndexing: true,
-
-  emailNotifications: true,
-
-  twoFactor: false,
-};
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { profileAPI } from "../services/api";
+import { queryClient } from "../utils/queryClient";
 
 export const useSettings = () => {
-  const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem("settings");
+  /* load user settings */
 
-    return {
-      ...defaultSettings,
+  const query = useQuery({
+    queryKey: ["user"],
 
-      ...(saved ? JSON.parse(saved) : {}),
-    };
+    queryFn: async () => {
+      const res = await profileAPI.getMyProfile();
+
+      return res.data.user;
+    },
   });
 
-  /* autosave */
-  useEffect(() => {
-    localStorage.setItem(
-      "settings",
+  /* update */
 
-      JSON.stringify(settings),
-    );
-  }, [settings]);
+  const mutation = useMutation({
+    mutationFn: profileAPI.updateProfile,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
+    },
+  });
+
+  /* unified update function */
 
   const update = (field, value) => {
-    setSettings((prev) => ({
-      ...prev,
-
+    mutation.mutate({
       [field]: value,
-    }));
+    });
   };
 
   return {
-    settings,
+    settings: {
+      username: query.data?.username || "",
+
+      isPublic: query.data?.isPublic ?? true,
+
+      allowIndexing: query.data?.allowIndexing ?? true,
+
+      emailNotifications: query.data?.emailNotifications ?? false,
+
+      twoFactor: query.data?.twoFactor ?? false,
+    },
 
     update,
 
-    setSettings,
+    loading: query.isLoading,
   };
 };

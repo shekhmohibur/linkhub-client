@@ -1,5 +1,3 @@
-// SettingsPage.jsx
-
 import {
   FiGlobe,
   FiCopy,
@@ -12,37 +10,44 @@ import {
 import Swal from "sweetalert2";
 
 import Toggle from "../../../components/shared/Toggle";
+
 import SectionCard from "../../../components/shared/SectionCard";
+
 import PasswordModal from "../../../components/shared/PasswordModal";
+
 import { useSettings } from "../../../hooks/useSettings";
 
 import { useState } from "react";
 
+import { useUser } from "../../../hooks/useUser";
+
 const Settings = () => {
-  const {
-    settings,
+  const { settings, update, loading } = useSettings();
 
-    update,
-  } = useSettings();
+  const { user } = useUser();
 
-  const {
-    changePassword,
-
-    resetPassword,
-  } = PasswordModal();
+  const { changePassword, resetPassword } = PasswordModal();
 
   const [copied, setCopied] = useState(false);
 
   /* copy profile url */
+
   const copyLink = () => {
-    navigator.clipboard.writeText(`intobio.com/${settings.username}`);
+    navigator.clipboard.writeText(
+      `${window.location.origin}/${settings.username}`,
+    );
 
     setCopied(true);
 
-    setTimeout(() => setCopied(false), 1500);
+    setTimeout(
+      () => setCopied(false),
+
+      1500,
+    );
   };
 
   /* delete account */
+
   const deleteAccount = () => {
     Swal.fire({
       title: "Delete account?",
@@ -56,12 +61,46 @@ const Settings = () => {
       confirmButtonColor: "#ef4444",
 
       confirmButtonText: "Delete",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log("delete account");
-      }
-    });
+    })
+
+      .then((result) => {
+        if (result.isConfirmed) {
+          console.log("delete account api");
+        }
+      });
   };
+
+  if (loading) {
+    return (
+      <div
+        className="
+
+flex items-center justify-center
+
+h-[60vh]
+
+"
+      >
+        <div
+          className="
+
+w-10 h-10
+
+border-2
+
+border-indigo-600
+
+border-t-transparent
+
+rounded-full
+
+animate-spin
+
+"
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -79,23 +118,29 @@ space-y-10
 
 "
     >
-      {/* header */}
-
       <div>
-        <h1 className="text-2xl font-semibold">Settings</h1>
+        <h1
+          className="
+
+text-2xl
+
+font-semibold
+
+"
+        >
+          Settings
+        </h1>
 
         <p className="text-gray-500">Manage your preferences</p>
       </div>
-
-      {/* profile url */}
 
       <SectionCard title="Profile link">
         <div
           className="
 
-flex flex-col sm:flex-row
+md:items-center gap-2
 
-gap-2
+flex flex-col sm:flex-row
 
 "
         >
@@ -103,9 +148,29 @@ gap-2
 
           <input
             value={settings.username}
-            onChange={(e) => update("username", e.target.value)}
+            onChange={(e) =>
+              update(
+                "username",
+
+                e.target.value,
+              )
+            }
             placeholder="username"
-            className="flex-1 bg-gray-50 px-3 py-2 rounded-lg outline-none "/>
+            className="
+
+flex-1
+
+bg-gray-50
+
+px-3 py-2
+
+rounded-lg
+
+outline-none
+
+"
+          />
+
           <button
             onClick={copyLink}
             className="
@@ -129,12 +194,24 @@ flex items-center gap-2
         </div>
       </SectionCard>
 
-      {/* domain */}
-
       <SectionCard
         title="Custom domain"
         right={
-          <span className="text-xs bg-black text-white px-2 py-1 rounded">
+          <span
+            className="
+
+text-xs
+
+bg-black
+
+text-white
+
+px-2 py-1
+
+rounded
+
+"
+          >
             PRO
           </span>
         }
@@ -202,53 +279,109 @@ cursor-pointer
         </div>
       </SectionCard>
 
-      {/* visibility */}
-
       <SectionCard title="Visibility">
-        <div className="flex items-center justify-between">
+        <div
+          className="
+
+flex items-center justify-between
+
+"
+        >
           <div>
             <p>Public profile</p>
 
-            <p className="text-sm text-gray-400">Anyone can see page</p>
+            <p
+              className="
+
+text-sm
+
+text-gray-400
+
+"
+            >
+              Anyone can see page
+            </p>
           </div>
 
           <Toggle
             value={settings.isPublic}
-            onChange={(v) => update("isPublic", v)}
+            onChange={(v) =>
+              update(
+                "isPublic",
+
+                v,
+              )
+            }
           />
         </div>
 
-        <div className="flex items-center justify-between">
+        <div
+          className="
+
+flex items-center justify-between
+
+"
+        >
           <div>
             <p>Search indexing</p>
 
-            <p className="text-sm text-gray-400">Google visibility</p>
+            <p
+              className="
+
+text-sm
+
+text-gray-400
+
+"
+            >
+              Google visibility
+            </p>
           </div>
 
           <Toggle
             value={settings.allowIndexing}
-            onChange={(v) => update("allowIndexing", v)}
+            onChange={(v) =>
+              update(
+                "allowIndexing",
+
+                v,
+              )
+            }
           />
         </div>
       </SectionCard>
 
-      {/* notifications */}
-
       <SectionCard title="Notifications">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div
+          className="
+
+flex items-center justify-between
+
+"
+        >
+          <div
+            className="
+
+flex items-center gap-2
+
+"
+          >
             <FiBell />
             Email alerts
           </div>
 
           <Toggle
             value={settings.emailNotifications}
-            onChange={(v) => update("emailNotifications", v)}
+            onChange={(v) =>
+              update(
+                "emailNotifications",
+
+                v,
+              )
+            }
           />
         </div>
       </SectionCard>
-
-      {/* security */}
 
       <SectionCard title="Security">
         <button
@@ -293,20 +426,36 @@ cursor-pointer
           Reset password via email
         </button>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div
+          className="
+
+flex items-center justify-between
+
+"
+        >
+          <div
+            className="
+
+flex items-center gap-2
+
+"
+          >
             <FiKey />
             Two factor auth
           </div>
 
           <Toggle
             value={settings.twoFactor}
-            onChange={(v) => update("twoFactor", v)}
+            onChange={(v) =>
+              update(
+                "twoFactor",
+
+                v,
+              )
+            }
           />
         </div>
       </SectionCard>
-
-      {/* delete */}
 
       <SectionCard title="Danger zone">
         <button

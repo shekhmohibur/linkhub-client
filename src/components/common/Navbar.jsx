@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { FiMenu, FiX, FiUser, FiSettings, FiLogOut } from "react-icons/fi";
 import useAuth from "../../hooks/useAuth";
 
-
 const Navbar = () => {
   const { user, logout } = useAuth();
 
@@ -268,7 +267,7 @@ space-y-1
 "
                   >
                     <Link
-                      to="/dashboard"
+                      to="/dashboard/analytics"
                       className="
 
 flex items-center gap-2
@@ -453,7 +452,7 @@ cursor-pointer
             {user && (
               <>
                 <Link
-                  to="/dashboard"
+                  to="/dashboard/analytics"
                   className="
 
 block

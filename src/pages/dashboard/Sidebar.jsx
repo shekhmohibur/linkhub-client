@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 
 import {
   IoMdLink,
@@ -66,7 +66,7 @@ const Sidebar = () => {
           px-2
         ">
 
-          inToBio
+          <Link to="/">inToBio</Link>
 
         </h2>
 

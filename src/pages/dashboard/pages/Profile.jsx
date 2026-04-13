@@ -2,38 +2,97 @@ import { useEffect, useState } from "react";
 
 import { FaInstagram, FaYoutube, FaTwitter, FaGlobe } from "react-icons/fa";
 
-import { useData } from "../../../contexts/DataContext";
 import { themes } from "../../../config/themes";
 
+import { useProfile } from "../../../hooks/useProfile";
+
+import { useUpdateProfile } from "../../../hooks/useUpdateProfile";
+
+import { useLinks } from "../../../hooks/useLinks";
+
 const Profile = () => {
-  const { profile, updateProfile, links } = useData();
+  const { data: profile, isLoading } = useProfile();
 
-  const [data, setData] = useState({
-    name: "",
-    username: "",
-    bio: "",
-    avatar: "https://i.pravatar.cc/150",
-    theme: "indigo",
-    buttonStyle: "solid",
-    socials: {
-      instagram: "",
-      youtube: "",
-      twitter: "",
-      website: "",
-    },
-  });
+  const { mutate: updateProfile } = useUpdateProfile();
 
-  /* auto load */
+  const { data: links } = useLinks();
+
+  const [data, setData] = useState(null);
+
+  /* load data */
+
   useEffect(() => {
-    if (profile) setData(profile);
+    if (profile) {
+      setData({
+        name: profile.name || "",
+
+        username: profile.username || "",
+
+        bio: profile.bio || "",
+
+        avatar: profile.avatar || "https://i.pravatar.cc/150",
+
+        theme: profile.theme || "indigo",
+
+        buttonStyle: profile.buttonStyle || "solid",
+
+        socials: profile.socialLinks || {
+          instagram: "",
+
+          youtube: "",
+
+          twitter: "",
+
+          website: "",
+        },
+      });
+    }
   }, [profile]);
 
-  /* auto save */
+  /* autosave */
+
   useEffect(() => {
-    updateProfile(data);
+    if (!data) return;
+
+    const timeout = setTimeout(() => {
+      updateProfile(data);
+    }, 700);
+
+    return () => clearTimeout(timeout);
   }, [data]);
 
-  /* update helper */
+  if (isLoading || !data) {
+    return (
+      <div
+        className="
+
+flex items-center justify-center
+
+h-[60vh]
+
+"
+      >
+        <div
+          className="
+
+w-10 h-10
+
+border-2
+
+border-indigo-600
+
+border-t-transparent
+
+rounded-full
+
+animate-spin
+
+"
+        />
+      </div>
+    );
+  }
+
   const update = (field, value) => {
     setData((prev) => ({
       ...prev,
@@ -57,18 +116,62 @@ const Profile = () => {
   const theme = themes[data.theme];
 
   return (
-    <div className="grid lg:grid-cols-2 gap-12">
+    <div
+      className="
+
+grid
+
+lg:grid-cols-2
+
+gap-10 lg:gap-14
+
+"
+    >
       {/* LEFT */}
 
       <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Profile</h1>
+        <h1
+          className="
 
-        {/* avatar */}
+text-2xl
 
-        <div className="bg-white p-6 rounded-3xl border space-y-4">
+font-semibold
+
+"
+        >
+          Profile
+        </h1>
+
+        {/* card */}
+
+        <div
+          className="
+
+bg-white
+
+p-6
+
+rounded-3xl
+
+shadow-sm
+
+space-y-4
+
+"
+        >
           <img
             src={data.avatar}
-            className="w-20 h-20 rounded-full object-cover"
+            className="
+
+w-20 h-20
+
+rounded-full
+
+object-cover
+
+shadow
+
+"
           />
 
           <input
@@ -78,73 +181,212 @@ const Profile = () => {
 
               const reader = new FileReader();
 
-              reader.onloadend = () => update("avatar", reader.result);
+              reader.onloadend = () => {
+                update(
+                  "avatar",
 
-              if (file) reader.readAsDataURL(file);
+                  reader.result,
+                );
+              };
+
+              if (file) {
+                reader.readAsDataURL(file);
+              }
             }}
+            className="cursor-pointer"
           />
 
           <input
             value={data.name}
-            onChange={(e) => update("name", e.target.value)}
+            onChange={(e) =>
+              update(
+                "name",
+
+                e.target.value,
+              )
+            }
             placeholder="Name"
-            className="w-full bg-gray-50 px-4 py-2 rounded-xl"
+            className="
+
+w-full
+
+bg-gray-50
+
+px-4 py-2.5
+
+rounded-xl
+
+"
           />
 
           <input
             value={data.username}
-            onChange={(e) => update("username", e.target.value)}
+            onChange={(e) =>
+              update(
+                "username",
+
+                e.target.value,
+              )
+            }
             placeholder="Username"
-            className="w-full bg-gray-50 px-4 py-2 rounded-xl"
+            className="
+
+w-full
+
+bg-gray-50
+
+px-4 py-2.5
+
+rounded-xl
+
+"
           />
 
           <textarea
             value={data.bio}
-            onChange={(e) => update("bio", e.target.value)}
+            onChange={(e) =>
+              update(
+                "bio",
+
+                e.target.value,
+              )
+            }
             placeholder="Bio"
-            className="w-full bg-gray-50 px-4 py-2 rounded-xl"
+            className="
+
+w-full
+
+bg-gray-50
+
+px-4 py-2.5
+
+rounded-xl
+
+"
           />
         </div>
 
         {/* themes */}
 
-        <div className="bg-white p-6 rounded-3xl border">
-          <h2 className="text-sm mb-3 text-gray-500">Themes</h2>
+        <div
+          className="
 
-          <div className="grid grid-cols-6 gap-3">
-            {Object.entries(themes).map(([key, t]) => (
-              <button
-                key={key}
-                onClick={() => update("theme", key)}
-                className={`
+bg-white
 
-w-10 h-10 rounded-xl
+p-6
 
-bg-linear-to-br ${t.gradient}
+rounded-3xl
+
+shadow-sm
+
+"
+        >
+          <p
+            className="
+
+text-sm
+
+text-gray-400
+
+mb-3
+
+"
+          >
+            Themes
+          </p>
+
+          <div
+            className="
+
+grid grid-cols-6 gap-3
+
+"
+          >
+            {Object.entries(themes)
+
+              .map(([key, t]) => (
+                <button
+                  key={key}
+                  onClick={() =>
+                    update(
+                      "theme",
+
+                      key,
+                    )
+                  }
+                  className={`
+
+w-10 h-10
+
+rounded-xl
+
+bg-gradient-to-br
+
+${t.gradient}
 
 ${data.theme === key ? "ring-2 ring-offset-2" : ""}
 
 `}
-              />
-            ))}
+                />
+              ))}
           </div>
         </div>
 
         {/* button style */}
 
-        <div className="bg-white p-6 rounded-3xl border">
-          <h2 className="text-sm mb-3 text-gray-500">Button style</h2>
+        <div
+          className="
+
+bg-white
+
+p-6
+
+rounded-3xl
+
+shadow-sm
+
+"
+        >
+          <p
+            className="
+
+text-sm
+
+text-gray-400
+
+mb-3
+
+"
+          >
+            Button style
+          </p>
 
           <div className="flex gap-2">
             {["solid", "soft", "outline"].map((style) => (
               <button
                 key={style}
-                onClick={() => update("buttonStyle", style)}
+                onClick={() =>
+                  update(
+                    "buttonStyle",
+
+                    style,
+                  )
+                }
                 className={`
 
-px-4 py-2 rounded-xl border text-sm
+px-4 py-2
 
-${data.buttonStyle === style ? "border-black" : "text-gray-400"}
+rounded-xl
+
+text-sm
+
+transition
+
+${
+  data.buttonStyle === style
+    ? "bg-gray-900 text-white"
+    : "bg-gray-100 text-gray-500"
+}
 
 `}
               >
@@ -156,41 +398,102 @@ ${data.buttonStyle === style ? "border-black" : "text-gray-400"}
 
         {/* socials */}
 
-        <div className="bg-white p-6 rounded-3xl border space-y-3">
-          <h2 className="text-sm text-gray-500">Social links</h2>
+        <div
+          className="
 
-          {Object.keys(data.socials).map((key) => (
-            <div key={key} className="flex gap-2">
-              <span className="text-gray-400">
-                {key === "instagram" && <FaInstagram />}
+bg-white
 
-                {key === "youtube" && <FaYoutube />}
+p-6
 
-                {key === "twitter" && <FaTwitter />}
+rounded-3xl
 
-                {key === "website" && <FaGlobe />}
-              </span>
+shadow-sm
 
-              <input
-                value={data.socials[key]}
-                onChange={(e) => updateSocial(key, e.target.value)}
-                placeholder={key}
-                className="w-full bg-gray-50 px-3 py-2 rounded-lg"
-              />
-            </div>
-          ))}
+space-y-3
+
+"
+        >
+          <p
+            className="
+
+text-sm
+
+text-gray-400
+
+"
+          >
+            Social links
+          </p>
+
+          {Object.keys(data.socials)
+
+            .map((key) => (
+              <div
+                key={key}
+                className="
+
+flex items-center gap-2
+
+"
+              >
+                <span
+                  className="
+
+text-gray-400
+
+"
+                >
+                  {key === "instagram" && <FaInstagram />}
+
+                  {key === "youtube" && <FaYoutube />}
+
+                  {key === "twitter" && <FaTwitter />}
+
+                  {key === "website" && <FaGlobe />}
+                </span>
+
+                <input
+                  value={data.socials[key]}
+                  onChange={(e) =>
+                    updateSocial(
+                      key,
+
+                      e.target.value,
+                    )
+                  }
+                  placeholder={key}
+                  className="
+
+w-full
+
+bg-gray-50
+
+px-3 py-2
+
+rounded-lg
+
+"
+                />
+              </div>
+            ))}
         </div>
       </div>
 
-      {/* PHONE */}
+      {/* preview */}
 
-      <div className="flex justify-center">
+      <div
+        className="
+
+flex justify-center
+
+"
+      >
         <div
           className="
 
 relative
 
-w-[340px]
+w-[330px]
 
 h-[690px]
 
@@ -207,62 +510,94 @@ shadow-2xl
           <div
             className={`
 
-relative
-
-w-full
-
-h-full
+w-full h-full
 
 rounded-[40px]
 
 overflow-hidden
 
-${theme.bg}
+${theme?.bg}
 
-${theme.text}
+${theme?.text}
 
 `}
           >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[150px] h-[28px] bg-black rounded-b-xl" />
+            <div
+              className="
 
-            <div className="overflow-y-auto h-full pb-10">
-              <div className={`h-40 bg-linear-to-br ${theme.gradient}`} />
+h-40
 
-              <img
-                src={data.avatar}
-                className="w-24 h-24 rounded-full border-4 border-white shadow -mt-12 mx-auto"
-              />
+bg-gradient-to-br
 
-              <div className="text-center mt-3 px-6">
-                <h3 className="font-semibold text-lg">
-                  {data.name || "Your Name"}
-                </h3>
+${theme.gradient}
 
-                <p className="text-sm opacity-70">
-                  @{data.username || "username"}
-                </p>
+"
+            />
 
-                <p className="mt-2 text-sm opacity-80">{data.bio || "bio"}</p>
-              </div>
+            <img
+              src={data.avatar}
+              className="
 
-              <div className="flex justify-center gap-4 mt-4 text-xl">
-                {data.socials.instagram && <FaInstagram />}
+w-24 h-24
 
-                {data.socials.youtube && <FaYoutube />}
+rounded-full
 
-                {data.socials.twitter && <FaTwitter />}
+mx-auto
 
-                {data.socials.website && <FaGlobe />}
-              </div>
+-translate-y-12
 
-              <div className="px-6 mt-6 space-y-3">
-                {links
-                  ?.filter((l) => l.visible)
+shadow-lg
 
-                  .map((link) => (
-                    <div
-                      key={link.id}
-                      className={`
+"
+            />
+
+            <div
+              className="
+
+text-center
+
+-translate-y-8
+
+px-6
+
+"
+            >
+              <h3 className="font-semibold">{data.name || "Name"}</h3>
+
+              <p
+                className="
+
+text-sm opacity-70
+
+"
+              >
+                @{data.username || "username"}
+              </p>
+
+              <p
+                className="
+
+text-sm mt-2 opacity-80
+
+"
+              >
+                {data.bio}
+              </p>
+            </div>
+
+            <div
+              className="
+
+px-6
+
+space-y-3
+
+"
+            >
+              {links?.map((link) => (
+                <div
+                  key={link._id}
+                  className={`
 
 py-3
 
@@ -272,23 +607,30 @@ text-center
 
 font-medium
 
-transition
-
-${data.buttonStyle === "solid" && theme.solid}
-
-${data.buttonStyle === "soft" && theme.soft}
-
-${data.buttonStyle === "outline" && theme.outline}
+${theme[data.buttonStyle]}
 
 `}
-                    >
-                      {link.title}
-                    </div>
-                  ))}
-              </div>
-
-              <p className="text-center text-xs opacity-40 mt-8">inToBio</p>
+                >
+                  {link.title}
+                </div>
+              ))}
             </div>
+
+            <p
+              className="
+
+text-center
+
+text-xs
+
+opacity-40
+
+mt-6
+
+"
+            >
+              inToBio
+            </p>
           </div>
         </div>
       </div>
