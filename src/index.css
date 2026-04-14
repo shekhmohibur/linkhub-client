@@ -61,6 +61,32 @@
 .editorial-gradient {
   background: linear-gradient(135deg, #4647d3 0%, #8b5cf6 100%);
 }
+
+/* logo slide animation */
+
+@keyframes logoSlide {
+  0% {
+    transform: translateX(-70px);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateX(6px);
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* utility class */
+
+.animate-logo-slide {
+  animation: logoSlide 0.6s ease-out forwards;
+}
+
+
 @layer base {
   * {
     box-sizing: border-box;
