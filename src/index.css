@@ -1,59 +1,100 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap");
 @import "tailwindcss";
 @plugin "daisyui";
 
 @theme {
-  --font-manrope: "Manrope", sans-serif;
-  --font-inter: "Inter", sans-serif;
+  /* colors */
+  --color-primary: #4647d3;
+  --color-primary-dim: #3939c7;
+  --color-primary-container: #9396ff;
+  --color-on-primary: #f4f1ff;
+
+  --color-secondary: #6a37d4;
+  --color-secondary-dim: #5e26c7;
+  --color-secondary-container: #dac9ff;
+  --color-on-secondary: #f8f0ff;
+
+  --color-tertiary: #5f5292;
+  --color-tertiary-container: #c3b4fc;
+  --color-on-tertiary: #f6f0ff;
+
+  --color-error: #b41340;
+  --color-error-container: #f74b6d;
+  --color-on-error: #ffefef;
+
+  --color-surface: #f5f7f9;
+  --color-surface-dim: #d0d5d8;
+  --color-surface-bright: #f5f7f9;
+  --color-surface-container-low: #eef1f4;
+  --color-surface-container-high: #e6eaee;
+  --color-surface-container-highest: #e1e6ea;
+
+  --color-background: #f5f7f9;
+  --color-on-background: #2c2f31;
+  --color-on-surface: #202327;
+  --color-on-surface-variant: #68707b;
+  --color-on-primary-container: #15136b;
+  --color-on-secondary-container: #32206d;
+
+  --color-outline: #747779;
+  --color-outline-variant: #abadaf;
+
+  /* radius */
+  --radius: 1rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+
+  /* fonts */
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+}
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+  vertical-align: middle;
+}
+.editorial-gradient {
+  background: linear-gradient(135deg, #4647d3 0%, #8b5cf6 100%);
+}
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-width: 320px;
+    margin: 0;
+    background: #f5f7f9;
+  }
+
+  button,
+  a,
+  input {
+    font: inherit;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    cursor: pointer;
+  }
 }
 
-html{
-scroll-behavior:smooth;
-}
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
 
-.hero-gradient {
-  background: linear-gradient(135deg, #4e44d4 0%, #9895ff 100%);
-}
-.text-gradient {
-  background: linear-gradient(135deg, #4e44d4 0%, #983772 100%);
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Modern scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Smooth animations */
-* {
-  scroll-behavior: smooth;
-}
-
-/* Glass morphism utilities */
-.glass {
-  backdrop-filter: blur(16px) saturate(180%);
-  background-color: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(209, 213, 219, 0.3);
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
